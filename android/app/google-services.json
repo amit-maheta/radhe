@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "95920999008",
+    "project_id": "radhe-fa592",
+    "storage_bucket": "radhe-fa592.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:95920999008:android:d2515b60c0410eb4c1d105",
+        "android_client_info": {
+          "package_name": "com.example.radhe"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBYPDsgas0D_Fvsbh7pkwrcMlY4QYm1-4c"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
