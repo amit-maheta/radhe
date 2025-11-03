@@ -12,6 +12,7 @@ import 'screens/customer_list_screen.dart';
 void main() async {
   // phone=9876543210&password=12345678
   WidgetsFlutterBinding.ensureInitialized();
+  // added
 
   // try {
   //   await Firebase.initializeApp(
