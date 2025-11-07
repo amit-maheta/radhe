@@ -37,7 +37,7 @@ class _CustomerListStatusScreenState extends State<CustomerListStatusScreen> {
     final DateTimeRange? picked = await showDateRangePicker(
       context: context,
       firstDate: DateTime(2000),
-      lastDate: DateTime.now(),
+      lastDate: DateTime(2035),
       initialDateRange: _selectedDateRange,
       builder: (BuildContext context, Widget? child) {
         return Theme(

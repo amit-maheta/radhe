@@ -9,18 +9,34 @@ import 'package:radhe/screens/full_screen_image_viewer.dart';
 import '../network/Repository/ApiProvider.dart';
 import '../utils/constants.dart';
 
-class CustomerDetailScreen extends StatelessWidget {
+class CustomerDetailScreen extends StatefulWidget {
   final Customer customer;
+
+  const CustomerDetailScreen({super.key, required this.customer});
+
+  @override
+  State<CustomerDetailScreen> createState() => _CustomerDetailScreenState();
+}
+
+class _CustomerDetailScreenState extends State<CustomerDetailScreen> {
   String _selectedStatus = '';
+
   final List<String> _statusOptions = [
     'Not Done',
     'Done',
     'Cancel',
     'In Progress',
   ];
+
   final TextEditingController _feedbackController = TextEditingController();
 
-  CustomerDetailScreen({super.key, required this.customer});
+  @override
+  void initState() {
+    super.initState();
+    setState(() {
+      _selectedStatus = widget.customer.status;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -47,29 +63,30 @@ class CustomerDetailScreen extends StatelessWidget {
 
               if (newFeedback.isNotEmpty) {
                 final data = {
-                  'name': customer.name,
-                  'address': customer.address,
-                  'source': customer.source,
-                  'latitude': customer.latitude,
-                  'longitude': customer..longitude,
-                  'contact_no': customer.contactNo,
-                  'contact_no_1': customer.contactNo1,
+                  'name': widget.customer.name,
+                  'address': widget.customer.address,
+                  'source': widget.customer.source,
+                  'latitude': widget.customer.latitude,
+                  'longitude': widget.customer..longitude,
+                  'contact_no': widget.customer.contactNo,
+                  'contact_no_1': widget.customer.contactNo1,
                   'status': _selectedStatus,
-                  'grade': customer.grade,
-                  'visiting_date': customer.visitingDate,
-                  'requirement': customer.requirement,
-                  'specific_note': customer.specificNote,
-                  'mistri_name': customer.mistriName,
-                  'last_follow_up_date': customer.lastFollowUpDate,
-                  'estimate_image': customer.estimateImageUrls,
-                  'last_feedback': "${customer.lastFeedback}[ ${newFeedback} ]",
+                  'grade': widget.customer.grade,
+                  'visiting_date': widget.customer.visitingDate,
+                  'requirement': widget.customer.requirement,
+                  'specific_note': widget.customer.specificNote,
+                  'mistri_name': widget.customer.mistriName,
+                  'last_follow_up_date': widget.customer.lastFollowUpDate,
+                  'estimate_image': widget.customer.estimateImageUrls,
+                  'last_feedback':
+                      "${widget.customer.lastFeedback}[ ${newFeedback} ]",
                 };
                 print(data);
                 final GlobalKey<State> _dialogKey = GlobalKey<State>();
                 try {
                   showLoadingDialog(context, _dialogKey, '');
                   final response = await ApiRepo().customerUpdate(
-                    customer.id.toString(),
+                    widget.customer.id.toString(),
                     data,
                     [],
                   );
@@ -79,7 +96,7 @@ class CustomerDetailScreen extends StatelessWidget {
                   if (response['success'] == true) {
                     showSnakeBar(
                       context,
-                      'Customer Added successfully',
+                      'Customer details update successfully',
                       backgroundColor: Colors.blue,
                     );
                     // await Future.delayed(const Duration(seconds: 1));
@@ -107,16 +124,16 @@ class CustomerDetailScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _buildSectionHeader('Basic Information'),
-            _buildInfoRow(context, 'Name', customer.name),
-            _buildInfoRow(context, 'Salesman', customer.user.name),
-            _buildInfoRow(context, 'Address', customer.address),
-            _buildInfoRow(context, 'Source', customer.source),
+            _buildInfoRow(context, 'Name', widget.customer.name),
+            _buildInfoRow(context, 'Salesman', widget.customer.user.name),
+            _buildInfoRow(context, 'Address', widget.customer.address),
+            _buildInfoRow(context, 'Source', widget.customer.source),
             // _buildInfoRow(context, 'Status', customer.status),
             _buildDropdownField(
               label: 'Status *',
               value: _selectedStatus.isNotEmpty
                   ? _selectedStatus
-                  : customer.status,
+                  : widget.customer.status,
               items: _statusOptions,
               icon: Icons.flag_outlined,
               onChanged: (value) {
@@ -126,26 +143,35 @@ class CustomerDetailScreen extends StatelessWidget {
                 // });
               },
             ),
-            _buildInfoRow(context, 'Grade', customer.grade),
+            _buildInfoRow(context, 'Grade', widget.customer.grade),
 
             const SizedBox(height: 16),
             _buildSectionHeader('Contact Information'),
-            _buildInfoRow(context, 'Primary Contact', customer.contactNo),
-            if (customer.contactNo1 != null && customer.contactNo1!.isNotEmpty)
-              _buildInfoRow(context, 'Secondary Contact', customer.contactNo!),
-            _buildInfoRow(context, 'Mistri Name', customer.mistriName),
+            _buildInfoRow(
+              context,
+              'Primary Contact',
+              widget.customer.contactNo,
+            ),
+            if (widget.customer.contactNo1 != null &&
+                widget.customer.contactNo1!.isNotEmpty)
+              _buildInfoRow(
+                context,
+                'Secondary Contact',
+                widget.customer.contactNo!,
+              ),
+            _buildInfoRow(context, 'Mistri Name', widget.customer.mistriName),
 
             const SizedBox(height: 16),
             _buildSectionHeader('Visit & Follow-up'),
             _buildInfoRow(
               context,
               'Visiting Date',
-              _formatDate(customer.visitingDate),
+              _formatDate(widget.customer.visitingDate),
             ),
             _buildInfoRow(
               context,
-              'Last Follow-up',
-              _formatDate(customer.lastFollowUpDate),
+              'Next Follow-up Date',
+              _formatDate(widget.customer.lastFollowUpDate),
             ),
 
             const SizedBox(height: 16),
@@ -153,31 +179,31 @@ class CustomerDetailScreen extends StatelessWidget {
             _buildInfoRow(
               context,
               'Requirement',
-              customer.requirement,
+              widget.customer.requirement,
               isMultiLine: true,
             ),
             _buildInfoRow(
               context,
               'Specific Note',
-              customer.specificNote,
+              widget.customer.specificNote,
               isMultiLine: true,
             ),
             _buildInfoRow(
               context,
               'Next follow up update',
-              customer.lastFeedback,
+              widget.customer.lastFeedback,
               isMultiLine: true,
             ),
 
-            if (customer.estimateImageUrls != null &&
-                customer.estimateImageUrls!.isNotEmpty) ...[
+            if (widget.customer.estimateImageUrls != null &&
+                widget.customer.estimateImageUrls!.isNotEmpty) ...[
               const SizedBox(height: 16),
               _buildSectionHeader('Estimate Images'),
-              _buildImageGrid(customer.estimateImageUrls!),
+              _buildImageGrid(widget.customer.estimateImageUrls!),
             ],
 
-            if ((customer.latitude?.isNotEmpty ?? false) &&
-                (customer.longitude?.isNotEmpty ?? false)) ...[
+            if ((widget.customer.latitude?.isNotEmpty ?? false) &&
+                (widget.customer.longitude?.isNotEmpty ?? false)) ...[
               const SizedBox(height: 16),
               _buildSectionHeader('Location'),
               _buildLocationInfo(context),
@@ -289,15 +315,22 @@ class CustomerDetailScreen extends StatelessWidget {
         children: textWidgets,
       );
     } else {
-      content = Text(
-        displayValue,
-        style: TextStyle(
-          fontSize: 16,
-          color: value.isEmpty ? Colors.grey.shade400 : Colors.black87,
-          fontWeight: FontWeight.w500,
+      content = GestureDetector(
+        onTap: () {
+          if (label == 'Next Follow-up Date') {
+            selectDate(context, false);
+          }
+        },
+        child: Text(
+          displayValue,
+          style: TextStyle(
+            fontSize: 16,
+            color: value.isEmpty ? Colors.grey.shade400 : Colors.black87,
+            fontWeight: FontWeight.w500,
+          ),
+          maxLines: isMultiLine ? null : 1,
+          overflow: isMultiLine ? null : TextOverflow.ellipsis,
         ),
-        maxLines: isMultiLine ? null : 1,
-        overflow: isMultiLine ? null : TextOverflow.ellipsis,
       );
     }
 
@@ -488,13 +521,13 @@ class CustomerDetailScreen extends StatelessWidget {
                       _buildLocationRow(
                         context,
                         'Latitude',
-                        customer.latitude ?? 'N/A',
+                        widget.customer.latitude ?? 'N/A',
                       ),
                       const SizedBox(height: 6),
                       _buildLocationRow(
                         context,
                         'Longitude',
-                        customer.longitude ?? 'N/A',
+                        widget.customer.longitude ?? 'N/A',
                       ),
                     ],
                   ),
@@ -502,11 +535,11 @@ class CustomerDetailScreen extends StatelessWidget {
                 const SizedBox(width: 12),
                 ElevatedButton.icon(
                   onPressed: () {
-                    if (customer.latitude != null &&
-                        customer.longitude != null) {
+                    if (widget.customer.latitude != null &&
+                        widget.customer.longitude != null) {
                       _openMap(
-                        customer.latitude!,
-                        customer.longitude!,
+                        widget.customer.latitude!,
+                        widget.customer.longitude!,
                         context,
                       );
                     }
@@ -609,5 +642,35 @@ class CustomerDetailScreen extends StatelessWidget {
         return DropdownMenuItem<String>(value: item, child: Text(item));
       }).toList(),
     );
+  }
+
+  Future<void> selectDate(BuildContext context, bool isVisitingDate) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2023),
+      lastDate: DateTime(2030),
+      builder: (context, child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme: const ColorScheme.light(
+              primary: Color(0xFF122B84),
+              onPrimary: Colors.white,
+              surface: Colors.white,
+              onSurface: Colors.black,
+            ),
+          ),
+          child: child!,
+        );
+      },
+    );
+
+    if (picked != null) {
+      setState(() {
+       
+          widget.customer.lastFollowUpDate = picked.toIso8601String();
+       
+      });
+    }
   }
 }

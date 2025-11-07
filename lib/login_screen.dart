@@ -66,7 +66,11 @@ class _LoginScreenState extends State<LoginScreen> {
               response['data']['user']['is_admin'].toString(),
             );
 
-            Navigator.pushReplacementNamed(context, '/home');
+            if (response['data']['user']['is_active'].toString() == "Active") {
+              Navigator.pushReplacementNamed(context, '/home');
+            }else {
+               showSnakeBar(context, 'Login failed. Your account is not active. Please contact the admin team.');
+            }
           } else {
             showSnakeBar(context, response['message'] ?? 'Login failed');
           }
