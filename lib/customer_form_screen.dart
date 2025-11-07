@@ -184,7 +184,7 @@ class _CustomerFormScreenState extends State<CustomerFormScreen> {
       'visiting_date': _visitingDate?.toIso8601String(),
       'requirement': _requirementController.text,
       'specific_note': _specificNoteController.text,
-      'mistri_name': _mistriController.text,
+      'mistri_name': _mistriController.text.isNotEmpty ? _mistriController.text : '-',
       'last_follow_up_date': _lastFollowUpDate?.toIso8601String(),
       'last_feedback': formattedText,
     };
@@ -435,9 +435,9 @@ class _CustomerFormScreenState extends State<CustomerFormScreen> {
                 controller: _mistriController,
                 label: 'Mistri/Thekedar Name',
                 icon: Icons.engineering_outlined,
-                validator: (value) => value == null || value.isEmpty
-                    ? 'Please enter Mistri/Thekedar Name'
-                    : null,
+                // validator: (value) => value == null || value.isEmpty
+                //     ? 'Please enter Mistri/Thekedar Name'
+                //     : null,
               ),
               const SizedBox(height: 16),
               _buildDateField(

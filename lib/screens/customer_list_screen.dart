@@ -22,6 +22,8 @@ class _CustomerListScreenState extends State<CustomerListScreen> {
   String _searchQuery = '';
   String _statusFilter = 'All';
   String _gradeFilter = 'All';
+  String startDateGlobal = '';
+  String endDateGlobal = '';
   final List<String> _statusList = [
     'All',
     'Active',
@@ -59,14 +61,17 @@ class _CustomerListScreenState extends State<CustomerListScreen> {
       setState(() {
         _selectedDateRange = picked;
 
-
-            final startDate = DateFormat('yyyy-MM-dd').format(picked.start);
-            final endDate = DateFormat('yyyy-MM-dd').format(picked.end);
-            setState(() {
-              customersList.clear(); // Clear existing data
-            });
-            getCustomers(startDate,endDate); // Re-fetch data based on selected date
-
+        final startDate = DateFormat('yyyy-MM-dd').format(picked.start);
+        final endDate = DateFormat('yyyy-MM-dd').format(picked.end);
+        setState(() {
+          customersList.clear(); // Clear existing data
+        });
+        startDateGlobal = startDate;
+        endDateGlobal = endDate;
+        getCustomers(
+          startDate,
+          endDate,
+        ); // Re-fetch data based on selected date
       });
     }
   }
@@ -98,7 +103,8 @@ class _CustomerListScreenState extends State<CustomerListScreen> {
     ); // Show loading dialog while fetching data
     try {
       final response = await ApiRepo().getCustomers(
-        startdate,endDate
+        startdate,
+        endDate,
       ); // Assume your API call method is getCustomers
       if (_dialogKey.currentContext != null) {
         Navigator.pop(_dialogKey.currentContext!); // Close loading dialog
@@ -138,6 +144,8 @@ class _CustomerListScreenState extends State<CustomerListScreen> {
     super.initState();
     final now = DateTime.now();
     final formattedDate = DateFormat('yyyy-MM-dd').format(now);
+    startDateGlobal = formattedDate;
+    endDateGlobal = formattedDate;
     getCustomers(formattedDate, formattedDate);
   }
 
@@ -492,26 +500,18 @@ class _CustomerListScreenState extends State<CustomerListScreen> {
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Icon(
-                      Icons.location_on,
-                      size: 16,
-                      color: Colors.grey[600],
-                    ),
+                    Icon(Icons.location_on, size: 16, color: Colors.grey[600]),
                     const SizedBox(width: 8),
                     Expanded(
                       child: Text(
                         'Lat: ${customer.latitude ?? ''} Long: ${customer.longitude ?? ''}',
-                        style: TextStyle(
-                          color: Colors.grey[700],
-                          fontSize: 13,
-                        ),
+                        style: TextStyle(color: Colors.grey[700], fontSize: 13),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),
                   ],
                 ),
-
 
                 const SizedBox(height: 12),
 
@@ -639,13 +639,29 @@ class _CustomerListScreenState extends State<CustomerListScreen> {
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton.icon(
-                    onPressed: () {
-                      Navigator.push(
+                    onPressed: () async {
+                      // Navigator.push(
+                      //   context,
+                      //   MaterialPageRoute(
+                      //     builder: (context) =>
+                      //         CustomerDetailScreen(customer: customer),
+                      //   ),
+                      // );
+                       final result = await Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => CustomerDetailScreen(customer: customer),
+                          builder: (context) =>
+                              CustomerDetailScreen(customer: customer),
                         ),
                       );
+
+                      // After coming back, refresh data or text
+                      if (result == 'refresh') {
+                        setState(() {
+                          // Update text or reload data here
+                          getCustomers(startDateGlobal, endDateGlobal);
+                        });
+                      }
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.white,

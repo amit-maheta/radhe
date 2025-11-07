@@ -116,10 +116,19 @@ class _CustomerListStatusScreenState extends State<CustomerListStatusScreen> {
         List<dynamic> customersJson = response['data'] ?? [];
 
         // Map the response data to Customer model
+        // List<Customer> customers = customersJson
+        //     .map(
+        //       (json) => Customer.fromJson(json),
+        //     ) // Convert each JSON object to a Customer model
+        //     .toList();
+        // Map and filter the response data to Customer model
         List<Customer> customers = customersJson
-            .map(
-              (json) => Customer.fromJson(json),
-            ) // Convert each JSON object to a Customer model
+            .map((json) => Customer.fromJson(json))
+            .where(
+              (customer) =>
+                  customer.status == 'Not Done' ||
+                  customer.status == 'In Progress',
+            )
             .toList();
 
         // Now you can use the 'customers' list as needed in your app
@@ -284,7 +293,7 @@ class _CustomerListStatusScreenState extends State<CustomerListStatusScreen> {
                         ),
                         const SizedBox(height: 16),
                         Text(
-                          'No customers found',
+                          'Not any task found',
                           style: TextStyle(
                             fontSize: 18,
                             color: Colors.grey[600],
