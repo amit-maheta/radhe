@@ -100,7 +100,9 @@ class _CustomerDetailScreenState extends State<CustomerDetailScreen> {
                       backgroundColor: Colors.blue,
                     );
                     // await Future.delayed(const Duration(seconds: 1));
-                    Navigator.pushReplacementNamed(context, '/home');
+                    // Navigator.pushReplacementNamed(context, '/home');
+                    // Navigator.pop(_dialogKey.currentContext!);
+                    Navigator.pop(context, 'refresh');
                   } else {
                     showSnakeBar(
                       context,

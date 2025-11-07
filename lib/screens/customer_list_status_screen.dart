@@ -23,6 +23,8 @@ class _CustomerListStatusScreenState extends State<CustomerListStatusScreen> {
   String _searchQuery = '';
   String _statusFilter = 'All';
   String _gradeFilter = 'All';
+  String startDateGlobal = '';
+  String endDateGlobal = '';
   final List<String> _statusList = [
     'All',
     'Active',
@@ -65,6 +67,8 @@ class _CustomerListStatusScreenState extends State<CustomerListStatusScreen> {
         setState(() {
           customersList.clear(); // Clear existing data
         });
+        startDateGlobal = startDate;
+        endDateGlobal = endDate;
         getCustomers(
           startDate,
           endDate,
@@ -141,6 +145,8 @@ class _CustomerListStatusScreenState extends State<CustomerListStatusScreen> {
     super.initState();
     final now = DateTime.now();
     final formattedDate = DateFormat('yyyy-MM-dd').format(now);
+    startDateGlobal = formattedDate;
+    endDateGlobal = formattedDate;
     getCustomers(formattedDate, formattedDate);
   }
 
@@ -634,14 +640,29 @@ class _CustomerListStatusScreenState extends State<CustomerListStatusScreen> {
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton.icon(
-                    onPressed: () {
-                      Navigator.push(
+                    onPressed: () async {
+                      // Navigator.push(
+                      //   context,
+                      //   MaterialPageRoute(
+                      //     builder: (context) =>
+                      //         CustomerDetailScreen(customer: customer),
+                      //   ),
+                      // );
+                      final result = await Navigator.push(
                         context,
                         MaterialPageRoute(
                           builder: (context) =>
                               CustomerDetailScreen(customer: customer),
                         ),
                       );
+
+                      // After coming back, refresh data or text
+                      if (result == 'refresh') {
+                        setState(() {
+                          // Update text or reload data here
+                          getCustomers(startDateGlobal, endDateGlobal);
+                        });
+                      }
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.white,
