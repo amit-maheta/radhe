@@ -87,7 +87,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
 
     final data = {
       "name": _fullNameController.text.trim(),
-      "email": _emailController.text.trim(),
+      "email": _emailController.text.isNotEmpty ? _emailController.text.trim() : 'radhe${_mobileController.text.trim()}@example.com',
       "phone": _mobileController.text.trim(),
       "password": _passwordController.text.trim(),
       "is_admin": 'false',

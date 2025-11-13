@@ -72,14 +72,14 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                   ),
                 ),
                 const SizedBox(height: 8),
-                Text(
-                  AppConstants.LOGIN_USER_EMAIL,
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.grey[600],
-                    fontStyle: FontStyle.italic,
-                  ),
-                ),
+                // Text(
+                //   AppConstants.LOGIN_USER_EMAIL,
+                //   style: TextStyle(
+                //     fontSize: 16,
+                //     color: Colors.grey[600],
+                //     fontStyle: FontStyle.italic,
+                //   ),
+                // ),
                 const SizedBox(height: 8),
                 Text(
                   'What would you like to do today?',
