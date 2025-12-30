@@ -20,6 +20,8 @@ class CustomerDetailScreen extends StatefulWidget {
 
 class _CustomerDetailScreenState extends State<CustomerDetailScreen> {
   String _selectedStatus = '';
+  String _selectedGrade = '';
+  String _selectedSource = '';
 
   final List<String> _statusOptions = [
     'Not Done',
@@ -28,14 +30,31 @@ class _CustomerDetailScreenState extends State<CustomerDetailScreen> {
     'In Progress',
   ];
 
+  final List<String> _gradeOptions = ['Normal', 'IMP', 'Most IMP'];
+  final List<String> _sourceOptions = ['Direct', 'Field'];
+
   final TextEditingController _feedbackController = TextEditingController();
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _addressController = TextEditingController();
+  // final TextEditingController _sourceController = TextEditingController();
+  final TextEditingController _salesmanController = TextEditingController();
+  final TextEditingController _requirementController = TextEditingController();
+  final TextEditingController _specificNoteController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
     setState(() {
       _selectedStatus = widget.customer.status;
+      _selectedGrade = widget.customer.grade;
+      _selectedSource = widget.customer.source;
     });
+    _nameController.text = widget.customer.name;
+    _addressController.text = widget.customer.address;
+    // _sourceController.text = widget.customer.source;
+    _salesmanController.text = widget.customer.user.name;
+    _requirementController.text = widget.customer.requirement;
+    _specificNoteController.text = widget.customer.specificNote;
   }
 
   @override
@@ -62,19 +81,60 @@ class _CustomerDetailScreenState extends State<CustomerDetailScreen> {
               }
 
               if (newFeedback.isNotEmpty) {
+                // Validate mandatory fields
+                if (_salesmanController.text.trim().isEmpty) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Salesman is a mandatory field.'),
+                    ),
+                  );
+                  return;
+                }
+                if (_addressController.text.trim().isEmpty) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Address is a mandatory field.'),
+                    ),
+                  );
+                  return;
+                }
+                // if (_sourceController.text.trim().isEmpty) {
+                //   ScaffoldMessenger.of(context).showSnackBar(
+                //     const SnackBar(
+                //       content: Text('Source is a mandatory field.'),
+                //     ),
+                //   );
+                //   return;
+                // }
+                if (_requirementController.text.trim().isEmpty) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Requirement is a mandatory field.'),
+                    ),
+                  );
+                  return;
+                }
+                if (_specificNoteController.text.trim().isEmpty) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Specific Note is a mandatory field.'),
+                    ),
+                  );
+                  return;
+                }
                 final data = {
-                  'name': widget.customer.name,
-                  'address': widget.customer.address,
-                  'source': widget.customer.source,
+                  'name': _nameController.text,
+                  'address': _addressController.text,
+                  'source': _selectedSource,
                   'latitude': widget.customer.latitude,
-                  'longitude': widget.customer..longitude,
+                  'longitude': widget.customer.longitude,
                   'contact_no': widget.customer.contactNo,
                   'contact_no_1': widget.customer.contactNo1,
                   'status': _selectedStatus,
-                  'grade': widget.customer.grade,
+                  'grade': _selectedGrade,
                   'visiting_date': widget.customer.visitingDate,
-                  'requirement': widget.customer.requirement,
-                  'specific_note': widget.customer.specificNote,
+                  'requirement': _requirementController.text,
+                  'specific_note': _specificNoteController.text,
                   'mistri_name': widget.customer.mistriName,
                   'last_follow_up_date': widget.customer.lastFollowUpDate,
                   'estimate_image': widget.customer.estimateImageUrls,
@@ -126,18 +186,54 @@ class _CustomerDetailScreenState extends State<CustomerDetailScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _buildSectionHeader('Basic Information'),
-            _buildInfoRow(context, 'Name', widget.customer.name),
-            _buildInfoRow(context, 'Salesman', widget.customer.user.name),
-            _buildInfoRow(context, 'Address', widget.customer.address),
-            _buildInfoRow(context, 'Source', widget.customer.source),
+            _buildInfoRow(
+              context,
+              'Name',
+              widget.customer.name,
+              isEditable: false,
+              controller: _nameController,
+            ),
+            _buildInfoRow(
+              context,
+              'Salesman',
+              widget.customer.user.name,
+              isEditable: true,
+              controller: _salesmanController,
+              isMandatory: true,
+            ),
+            _buildInfoRow(
+              context,
+              'Address',
+              widget.customer.address,
+              isEditable: true,
+              controller: _addressController,
+              isMultiLine: true,
+              isMandatory: true,
+            ),
+            // _buildInfoRow(context, 'Source', widget.customer.source, isEditable: true, controller: _sourceController, isMandatory: true),
             // _buildInfoRow(context, 'Status', customer.status),
+            _buildDropdownField(
+              label: 'Source *',
+              value: _selectedSource.isNotEmpty
+                  ? _selectedSource
+                  : widget.customer.source,
+              items: _sourceOptions,
+              icon: Icons.source_outlined,
+              onChanged: (value) {
+                _selectedSource = value!;
+                // setState(() {
+                //   _selectedStatus = value!;
+                // });
+              },
+            ),
+            const SizedBox(height: 16),
             _buildDropdownField(
               label: 'Status *',
               value: _selectedStatus.isNotEmpty
                   ? _selectedStatus
                   : widget.customer.status,
               items: _statusOptions,
-              icon: Icons.flag_outlined,
+              icon: Icons.source_outlined,
               onChanged: (value) {
                 _selectedStatus = value!;
                 // setState(() {
@@ -145,21 +241,36 @@ class _CustomerDetailScreenState extends State<CustomerDetailScreen> {
                 // });
               },
             ),
-            _buildInfoRow(context, 'Grade', widget.customer.grade),
+            // _buildInfoRow(context, 'Grade', widget.customer.grade),
+            const SizedBox(height: 16),
+            _buildDropdownField(
+              label: 'Grade *',
+              value: _selectedGrade.isNotEmpty
+                  ? _selectedGrade
+                  : widget.customer.grade,
+              items: _gradeOptions,
+              icon: Icons.source_outlined,
+              onChanged: (value) {
+                _selectedGrade = value!;
+                // setState(() {
+                //   _selectedStatus = value!;
+                // });
+              },
+            ),
 
             const SizedBox(height: 16),
             _buildSectionHeader('Contact Information'),
             _buildInfoRow(
               context,
               'Primary Contact',
-              widget.customer.contactNo,
+              widget.customer.contactNo1,
             ),
             if (widget.customer.contactNo1 != null &&
                 widget.customer.contactNo1!.isNotEmpty)
               _buildInfoRow(
                 context,
                 'Secondary Contact',
-                widget.customer.contactNo!,
+                widget.customer.contactNo1!,
               ),
             _buildInfoRow(context, 'Mistri Name', widget.customer.mistriName),
 
@@ -182,13 +293,19 @@ class _CustomerDetailScreenState extends State<CustomerDetailScreen> {
               context,
               'Requirement',
               widget.customer.requirement,
+              isEditable: true,
+              controller: _requirementController,
               isMultiLine: true,
+              isMandatory: true,
             ),
             _buildInfoRow(
               context,
               'Specific Note',
               widget.customer.specificNote,
+              isEditable: true,
+              controller: _specificNoteController,
               isMultiLine: true,
+              isMandatory: true,
             ),
             _buildInfoRow(
               context,
@@ -235,13 +352,18 @@ class _CustomerDetailScreenState extends State<CustomerDetailScreen> {
   Widget _buildInfoRow(
     BuildContext context,
     String label,
-    String value, {
+    String? value, {
     bool isMultiLine = false,
+    bool isEditable = false,
+    bool isMandatory = false,
+    TextEditingController? controller,
   }) {
     final bool isPhoneNumber =
         label == 'Primary Contact' || label == 'Secondary Contact';
-    final String displayValue = value.isNotEmpty ? value : 'Not specified';
-    final bool isClickable = isPhoneNumber && value.isNotEmpty;
+    final String displayValue = isEditable && controller != null
+        ? controller.text
+        : (value?.isNotEmpty ?? false ? value! : 'Not specified');
+    final bool isClickable = isPhoneNumber && (value?.isNotEmpty ?? false);
 
     Widget? content, contentEditInput;
 
@@ -272,7 +394,24 @@ class _CustomerDetailScreenState extends State<CustomerDetailScreen> {
       );
     }
 
-    if (label == 'Next follow up update') {
+    if (isEditable && controller != null) {
+      content = TextFormField(
+        controller: controller,
+        maxLines: isMultiLine ? null : 1,
+        decoration: InputDecoration(
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8.0),
+            borderSide: BorderSide(color: Colors.grey.shade300),
+          ),
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 12,
+            vertical: 12,
+          ),
+          filled: true,
+          fillColor: Colors.grey.shade50,
+        ),
+      );
+    } else if (label == 'Next follow up update') {
       final String rawString = displayValue;
 
       // Use RegExp to extract everything inside square brackets
@@ -327,7 +466,9 @@ class _CustomerDetailScreenState extends State<CustomerDetailScreen> {
           displayValue,
           style: TextStyle(
             fontSize: 16,
-            color: value.isEmpty ? Colors.grey.shade400 : Colors.black87,
+            color: (value?.isEmpty ?? true)
+                ? Colors.grey.shade400
+                : Colors.black87,
             fontWeight: FontWeight.w500,
           ),
           maxLines: isMultiLine ? null : 1,
@@ -337,7 +478,7 @@ class _CustomerDetailScreenState extends State<CustomerDetailScreen> {
     }
 
     if (isClickable) {
-      final String phoneNumber = value.replaceAll(
+      final String phoneNumber = value!.replaceAll(
         RegExp(r'[^0-9]'),
         '',
       ); // Remove any non-numeric characters
@@ -392,16 +533,9 @@ class _CustomerDetailScreenState extends State<CustomerDetailScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            label,
-            style: const TextStyle(
-              fontSize: 14,
-              color: Colors.grey,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
+          isMandatory ? Text.rich(buildLabelWithAsterisk(label)) : Text(label),
           const SizedBox(height: 2),
-          content ?? SizedBox(),
+          content,
           SizedBox(height: 10),
           contentEditInput ?? SizedBox(),
           const Divider(height: 24, thickness: 1),
@@ -431,8 +565,6 @@ class _CustomerDetailScreenState extends State<CustomerDetailScreen> {
 
   Future<void> _openWhatsApp(String phoneNumber, BuildContext context) async {
     // print(phoneNumber);
-    final url =
-        'whatsapp://send?phone="$phoneNumber"&text="Hello Radhe Tiles World Here.."';
     final whatsApp = Uri.parse('https://wa.me/$phoneNumber');
     await launchUrl(whatsApp);
   }
@@ -669,9 +801,7 @@ class _CustomerDetailScreenState extends State<CustomerDetailScreen> {
 
     if (picked != null) {
       setState(() {
-       
-          widget.customer.lastFollowUpDate = picked.toIso8601String();
-       
+        widget.customer.lastFollowUpDate = picked.toIso8601String();
       });
     }
   }
