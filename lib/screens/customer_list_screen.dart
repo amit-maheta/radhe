@@ -6,6 +6,9 @@ import 'package:radhe/screens/customer_detail_screen.dart';
 import 'package:radhe/utils/constants.dart';
 import '../models/customer.dart';
 import '../widgets/common_app_bar.dart'; // Import the CommonAppBar widget
+import 'package:pdf/pdf.dart';
+import 'package:pdf/widgets.dart' as pw;
+import 'package:printing/printing.dart';
 
 class CustomerListScreen extends StatefulWidget {
   const CustomerListScreen({super.key});
@@ -24,14 +27,6 @@ class _CustomerListScreenState extends State<CustomerListScreen> {
   String _gradeFilter = 'All';
   String startDateGlobal = '';
   String endDateGlobal = '';
-  final List<String> _statusList = [
-    'All',
-    'Active',
-    'Inactive',
-    'Pending',
-    'Completed',
-  ];
-  final List<String> _gradeList = ['All', 'A', 'B', 'C', 'D'];
   DateTimeRange? _selectedDateRange;
 
   Future<void> _selectDate(BuildContext context) async {
@@ -187,6 +182,12 @@ class _CustomerListScreenState extends State<CustomerListScreen> {
       appBar: CommonAppBar(
         title: 'Customers',
         actions: [
+          IconButton(
+            icon: const Icon(Icons.picture_as_pdf),
+            onPressed: _showPdfOptions,
+            tooltip: 'PDF Generate',
+          ),
+          const SizedBox(width: 25,),
           IconButton(
             icon: const Icon(Icons.calendar_today),
             onPressed: () => _selectDate(context),
@@ -691,32 +692,7 @@ class _CustomerListScreenState extends State<CustomerListScreen> {
     );
   }
 
-  Widget _buildFilterChip({
-    required String label,
-    required VoidCallback onTap,
-  }) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: Colors.grey[300]!),
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(label, style: const TextStyle(fontSize: 14)),
-            const SizedBox(width: 4),
-            const Icon(Icons.arrow_drop_down, size: 18),
-          ],
-        ),
-      ),
-    );
-  }
-
-  void _showStatusFilter() {
+  void _showPdfOptions() {
     showModalBottomSheet(
       context: context,
       shape: const RoundedRectangleBorder(
@@ -729,24 +705,26 @@ class _CustomerListScreenState extends State<CustomerListScreen> {
             const Padding(
               padding: EdgeInsets.all(16),
               child: Text(
-                'Filter by Status',
+                'PDF Options',
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
             ),
-            ..._statusList.map((status) {
-              return ListTile(
-                title: Text(status),
-                trailing: _statusFilter == status
-                    ? const Icon(Icons.check, color: Colors.blue)
-                    : null,
-                onTap: () {
-                  setState(() {
-                    _statusFilter = status;
-                  });
-                  Navigator.pop(context);
-                },
-              );
-            }).toList(),
+            ListTile(
+              leading: const Icon(Icons.print),
+              title: const Text('Print PDF'),
+              onTap: () {
+                Navigator.pop(context);
+                _generatePdf(print: true);
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.share),
+              title: const Text('Share PDF'),
+              onTap: () {
+                Navigator.pop(context);
+                _generatePdf(print: false);
+              },
+            ),
             const SizedBox(height: 8),
           ],
         );
@@ -754,42 +732,75 @@ class _CustomerListScreenState extends State<CustomerListScreen> {
     );
   }
 
-  void _showGradeFilter() {
-    showModalBottomSheet(
-      context: context,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-      ),
-      builder: (context) {
-        return Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Padding(
-              padding: EdgeInsets.all(16),
-              child: Text(
-                'Filter by Grade',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
+  Future<void> _generatePdf({required bool print}) async {
+    final pdf = pw.Document();
+
+    pdf.addPage(
+      pw.MultiPage(
+        pageFormat: PdfPageFormat.a4,
+        build: (pw.Context context) {
+          return [
+            pw.Header(
+              level: 0,
+              child: pw.Text('Customer List Report', style: pw.TextStyle(fontSize: 24, fontWeight: pw.FontWeight.bold)),
             ),
-            ..._gradeList.map((grade) {
-              return ListTile(
-                title: Text(grade == 'All' ? 'All Grades' : 'Grade $grade'),
-                trailing: _gradeFilter == grade
-                    ? const Icon(Icons.check, color: Colors.blue)
-                    : null,
-                onTap: () {
-                  setState(() {
-                    _gradeFilter = grade;
-                  });
-                  Navigator.pop(context);
-                },
-              );
-            }).toList(),
-            const SizedBox(height: 8),
-          ],
-        );
-      },
+            pw.SizedBox(height: 20),
+            pw.Table(
+              border: pw.TableBorder.all(),
+              children: [
+                pw.TableRow(
+                  children: [
+                    pw.Container(padding: const pw.EdgeInsets.all(4), child: pw.Text('S.No.', style: pw.TextStyle(fontWeight: pw.FontWeight.bold))),
+                    pw.Container(padding: const pw.EdgeInsets.all(4), child: pw.Text('Name', style: pw.TextStyle(fontWeight: pw.FontWeight.bold))),
+                    pw.Container(padding: const pw.EdgeInsets.all(4), child: pw.Text('Salesman', style: pw.TextStyle(fontWeight: pw.FontWeight.bold))),
+                    pw.Container(padding: const pw.EdgeInsets.all(4), child: pw.Text('Address', style: pw.TextStyle(fontWeight: pw.FontWeight.bold))),
+                    pw.Container(padding: const pw.EdgeInsets.all(4), child: pw.Text('Source', style: pw.TextStyle(fontWeight: pw.FontWeight.bold))),
+                    pw.Container(padding: const pw.EdgeInsets.all(4), child: pw.Text('Status', style: pw.TextStyle(fontWeight: pw.FontWeight.bold))),
+                    pw.Container(padding: const pw.EdgeInsets.all(4), child: pw.Text('Grade', style: pw.TextStyle(fontWeight: pw.FontWeight.bold))),
+                    pw.Container(padding: const pw.EdgeInsets.all(4), child: pw.Text('Contact', style: pw.TextStyle(fontWeight: pw.FontWeight.bold))),
+                    pw.Container(padding: const pw.EdgeInsets.all(4), child: pw.Text('Visiting Date', style: pw.TextStyle(fontWeight: pw.FontWeight.bold))),
+                  ],
+                ),
+                ...customersList.asMap().entries.map((entry) => pw.TableRow(
+                  children: [
+                    pw.Container(padding: const pw.EdgeInsets.all(4), child: pw.Text((entry.key + 1).toString())),
+                    pw.Container(padding: const pw.EdgeInsets.all(4), child: pw.Text(entry.value.name)),
+                    pw.Container(padding: const pw.EdgeInsets.all(4), child: pw.Text(entry.value.user.name)),
+                    pw.Container(padding: const pw.EdgeInsets.all(4), child: pw.Text(entry.value.address)),
+                    pw.Container(padding: const pw.EdgeInsets.all(4), child: pw.Text(entry.value.source)),
+                    pw.Container(padding: const pw.EdgeInsets.all(4), child: pw.Text(entry.value.status)),
+                    pw.Container(padding: const pw.EdgeInsets.all(4), child: pw.Text(entry.value.grade)),
+                    pw.Container(padding: const pw.EdgeInsets.all(4), child: pw.UrlLink(
+                      destination: 'tel:${entry.value.contactNo}',
+                      child: pw.Text(entry.value.contactNo, style: pw.TextStyle(color: PdfColors.blue, decoration: pw.TextDecoration.underline)),
+                    )),
+                    pw.Container(padding: const pw.EdgeInsets.all(4), child: pw.Text(_formatDate(entry.value.visitingDate))),
+                  ],
+                )),
+              ],
+            ),
+          ];
+        },
+      ),
     );
+
+    if (print) {
+      await Printing.layoutPdf(
+        onLayout: (PdfPageFormat format) async => pdf.save(),
+      );
+    } else {
+      // Share the PDF
+      await Printing.sharePdf(bytes: await pdf.save(), filename: 'customer_list.pdf');
+    }
+  }
+
+  String _formatDate(String dateString) {
+    try {
+      final date = DateTime.parse(dateString);
+      return '${date.day}/${date.month}/${date.year}';
+    } catch (e) {
+      return dateString; // Return original if parsing fails
+    }
   }
 
   @override
