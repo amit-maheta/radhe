@@ -54,127 +54,129 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         // showBackButton: false,
       ),
       drawer: _buildDrawer(),
-      body: FadeTransition(
-        opacity: _fadeAnimation,
-        child: SlideTransition(
-          position: _slideAnimation,
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Welcome back ${AppConstants.LOGIN_USER_NAME}!',
-                  style: const TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    color: Color(0xFF122B84),
+      body: SafeArea(
+        child: FadeTransition(
+          opacity: _fadeAnimation,
+          child: SlideTransition(
+            position: _slideAnimation,
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Welcome back ${AppConstants.LOGIN_USER_NAME}!',
+                    style: const TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF122B84),
+                    ),
                   ),
-                ),
-                const SizedBox(height: 8),
-                // Text(
-                //   AppConstants.LOGIN_USER_EMAIL,
-                //   style: TextStyle(
-                //     fontSize: 16,
-                //     color: Colors.grey[600],
-                //     fontStyle: FontStyle.italic,
-                //   ),
-                // ),
-                const SizedBox(height: 8),
-                Text(
-                  'What would you like to do today?',
-                  style: TextStyle(fontSize: 16, color: Colors.grey[600]),
-                ),
-                const SizedBox(height: 24),
-                GridView.count(
-                  crossAxisCount: 2,
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  crossAxisSpacing: 16,
-                  mainAxisSpacing: 16,
-                  children: [
-                    _buildActionCard(
-                      icon: Icons.people_outline,
-                      title: 'Customers',
-                      subtitle: 'View all customers',
-                      color: const Color(0xFF122B84),
-                      onTap: () {
-                        Navigator.pushNamed(context, '/customer-list');
-                      },
-                    ),
-                    _buildActionCard(
-                      icon: Icons.add_circle_outline,
-                      title: 'Add Customer',
-                      subtitle: 'Create new customer',
-                      color: Colors.green,
-                      onTap: () {
-                        Navigator.pushNamed(context, '/customer-form');
-                      },
-                    ),
-                    _buildActionCard(
-                      icon: Icons.analytics_outlined,
-                      title: 'My Task',
-                      subtitle: 'View Task',
-                      color: Colors.purple,
-                      onTap: () {
-                        Navigator.pushNamed(context, '/customer-list-status');
-                      },
-                    ),
-                    // _buildActionCard(
-                    //   icon: Icons.settings_outlined,
-                    //   title: 'Settings',
-                    //   subtitle: 'App settings',
-                    //   color: Colors.orange,
-                    //   onTap: () {},
-                    // ),
-                  ],
-                ),
-                const SizedBox(height: 24),
-                // const Text(
-                //   'Recent Activity',
-                //   style: TextStyle(
-                //     fontSize: 20,
-                //     fontWeight: FontWeight.bold,
-                //     color: Color(0xFF122B84),
-                //   ),
-                // ),
-                const SizedBox(height: 16),
-                // Container(
-                //   padding: const EdgeInsets.all(20),
-                //   decoration: BoxDecoration(
-                //     color: Colors.white,
-                //     borderRadius: BorderRadius.circular(12),
-                //     boxShadow: [
-                //       BoxShadow(
-                //         color: Colors.grey.withOpacity(0.1),
-                //         spreadRadius: 1,
-                //         blurRadius: 10,
-                //         offset: const Offset(0, 2),
-                //       ),
-                //     ],
-                //   ),
-                //   child: Column(
-                //     children: [
-                //       Icon(Icons.history, size: 48, color: Colors.grey[300]),
-                //       const SizedBox(height: 12),
-                //       const Text(
-                //         'No recent activity',
-                //         style: TextStyle(
-                //           fontSize: 16,
-                //           fontWeight: FontWeight.bold,
-                //           color: Colors.grey,
-                //         ),
-                //       ),
-                //       const SizedBox(height: 8),
-                //       Text(
-                //         'Your recent activities will appear here',
-                //         style: TextStyle(fontSize: 14, color: Colors.grey[500]),
-                //         textAlign: TextAlign.center,
-                //       ),
-                //     ],
-                //   ),
-                // ),
-              ],
+                  const SizedBox(height: 8),
+                  // Text(
+                  //   AppConstants.LOGIN_USER_EMAIL,
+                  //   style: TextStyle(
+                  //     fontSize: 16,
+                  //     color: Colors.grey[600],
+                  //     fontStyle: FontStyle.italic,
+                  //   ),
+                  // ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'What would you like to do today?',
+                    style: TextStyle(fontSize: 16, color: Colors.grey[600]),
+                  ),
+                  const SizedBox(height: 24),
+                  GridView.count(
+                    crossAxisCount: 2,
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    crossAxisSpacing: 16,
+                    mainAxisSpacing: 16,
+                    children: [
+                      _buildActionCard(
+                        icon: Icons.people_outline,
+                        title: 'Customers',
+                        subtitle: 'View all customers',
+                        color: const Color(0xFF122B84),
+                        onTap: () {
+                          Navigator.pushNamed(context, '/customer-list');
+                        },
+                      ),
+                      _buildActionCard(
+                        icon: Icons.add_circle_outline,
+                        title: 'Add Customer',
+                        subtitle: 'Create new customer',
+                        color: Colors.green,
+                        onTap: () {
+                          Navigator.pushNamed(context, '/customer-form');
+                        },
+                      ),
+                      _buildActionCard(
+                        icon: Icons.analytics_outlined,
+                        title: 'My Task',
+                        subtitle: 'View Task',
+                        color: Colors.purple,
+                        onTap: () {
+                          Navigator.pushNamed(context, '/customer-list-status');
+                        },
+                      ),
+                      // _buildActionCard(
+                      //   icon: Icons.settings_outlined,
+                      //   title: 'Settings',
+                      //   subtitle: 'App settings',
+                      //   color: Colors.orange,
+                      //   onTap: () {},
+                      // ),
+                    ],
+                  ),
+                  const SizedBox(height: 24),
+                  // const Text(
+                  //   'Recent Activity',
+                  //   style: TextStyle(
+                  //     fontSize: 20,
+                  //     fontWeight: FontWeight.bold,
+                  //     color: Color(0xFF122B84),
+                  //   ),
+                  // ),
+                  const SizedBox(height: 16),
+                  // Container(
+                  //   padding: const EdgeInsets.all(20),
+                  //   decoration: BoxDecoration(
+                  //     color: Colors.white,
+                  //     borderRadius: BorderRadius.circular(12),
+                  //     boxShadow: [
+                  //       BoxShadow(
+                  //         color: Colors.grey.withOpacity(0.1),
+                  //         spreadRadius: 1,
+                  //         blurRadius: 10,
+                  //         offset: const Offset(0, 2),
+                  //       ),
+                  //     ],
+                  //   ),
+                  //   child: Column(
+                  //     children: [
+                  //       Icon(Icons.history, size: 48, color: Colors.grey[300]),
+                  //       const SizedBox(height: 12),
+                  //       const Text(
+                  //         'No recent activity',
+                  //         style: TextStyle(
+                  //           fontSize: 16,
+                  //           fontWeight: FontWeight.bold,
+                  //           color: Colors.grey,
+                  //         ),
+                  //       ),
+                  //       const SizedBox(height: 8),
+                  //       Text(
+                  //         'Your recent activities will appear here',
+                  //         style: TextStyle(fontSize: 14, color: Colors.grey[500]),
+                  //         textAlign: TextAlign.center,
+                  //       ),
+                  //     ],
+                  //   ),
+                  // ),
+                ],
+              ),
             ),
           ),
         ),
@@ -215,7 +217,12 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: color.withOpacity(0.2),
+                  color: Color.fromRGBO(
+                    color.r.toInt(),
+                    color.g.toInt(),
+                    color.b.toInt(),
+                    0.2,
+                  ),
                   shape: BoxShape.circle,
                 ),
                 child: Icon(icon, color: color, size: 24),
@@ -242,129 +249,93 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
   Widget _buildDrawer() {
     return Drawer(
-      child: ListView(
-        padding: EdgeInsets.zero,
+      child: Column(
         children: [
-          DrawerHeader(
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [Color(0xFF122B84), Color(0xFF1E3A8A)],
-              ),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+          Expanded(
+            child: ListView(
+              padding: EdgeInsets.zero,
               children: [
-                Container(
-                  width: 60,
-                  height: 60,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(30),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Image.asset(
-                      'assets/png/app_logo.png',
-                      fit: BoxFit.contain,
+                DrawerHeader(
+                  decoration: const BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [Color(0xFF122B84), Color(0xFF1E3A8A)],
                     ),
                   ),
-                ),
-                const SizedBox(height: 12),
-                const Text(
-                  'Radhe',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        width: 60,
+                        height: 60,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Image.asset(
+                            'assets/png/app_logo.png',
+                            fit: BoxFit.contain,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      const Text(
+                        'Radhe',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const Text(
+                        'Customer Management',
+                        style: TextStyle(color: Colors.white70, fontSize: 14),
+                      ),
+                    ],
                   ),
                 ),
-                const Text(
-                  'Customer Management',
-                  style: TextStyle(color: Colors.white70, fontSize: 14),
+                ListTile(
+                  leading: const Icon(
+                    Icons.home_outlined,
+                    color: Color(0xFF122B84),
+                  ),
+                  title: const Text('Home'),
+                  onTap: () {
+                    Navigator.pop(context);
+                  },
                 ),
+                const Divider(),
+                ListTile(
+                  leading: const Icon(
+                    Icons.person_add_outlined,
+                    color: Color(0xFF122B84),
+                  ),
+                  title: const Text('Add Customer'),
+                  subtitle: const Text('Create new customer record'),
+                  onTap: () {
+                    Navigator.pop(context);
+                    Navigator.pushNamed(context, '/customer-form');
+                  },
+                ),
+                const Divider(),
+                ListTile(
+                  leading: const Icon(
+                    Icons.people_outline,
+                    color: Color(0xFF122B84),
+                  ),
+                  title: const Text('Customer List'),
+                  subtitle: const Text('View all customers'),
+                  onTap: () {
+                    Navigator.pop(context);
+                    Navigator.pushNamed(context, '/customer-list');
+                  },
+                ),
+                const Divider(),
               ],
             ),
-          ),
-          ListTile(
-            leading: const Icon(Icons.home_outlined, color: Color(0xFF122B84)),
-            title: const Text('Home'),
-            onTap: () {
-              Navigator.pop(context);
-            },
-          ),
-          const Divider(),
-          ListTile(
-            leading: const Icon(
-              Icons.person_add_outlined,
-              color: Color(0xFF122B84),
-            ),
-            title: const Text('Add Customer'),
-            subtitle: const Text('Create new customer record'),
-            onTap: () {
-              Navigator.pop(context);
-              Navigator.pushNamed(context, '/customer-form');
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.people_outline, color: Color(0xFF122B84)),
-            title: const Text('Customer List'),
-            subtitle: const Text('View all customers'),
-            onTap: () {
-              Navigator.pop(context);
-              Navigator.pushNamed(context, '/customer-list');
-            },
-          ),
-          ListTile(
-            leading: const Icon(
-              Icons.analytics_outlined,
-              color: Color(0xFF122B84),
-            ),
-            title: const Text('Reports'),
-            subtitle: const Text('Sales analytics & reports'),
-            onTap: () {
-              Navigator.pop(context);
-              // TODO: Navigate to reports screen
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Reports - Coming Soon!'),
-                  backgroundColor: Color(0xFF122B84),
-                ),
-              );
-            },
-          ),
-          const Divider(),
-          ListTile(
-            leading: const Icon(
-              Icons.settings_outlined,
-              color: Color(0xFF122B84),
-            ),
-            title: const Text('Settings'),
-            onTap: () {
-              Navigator.pop(context);
-              // TODO: Navigate to settings screen
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Settings - Coming Soon!'),
-                  backgroundColor: Color(0xFF122B84),
-                ),
-              );
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.help_outline, color: Color(0xFF122B84)),
-            title: const Text('Help & Support'),
-            onTap: () {
-              Navigator.pop(context);
-              // TODO: Navigate to help screen
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Help & Support - Coming Soon!'),
-                  backgroundColor: Color(0xFF122B84),
-                ),
-              );
-            },
           ),
           const Divider(),
           ListTile(
@@ -420,6 +391,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
               );
             },
           ),
+          const Divider(),
         ],
       ),
     );
