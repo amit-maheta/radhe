@@ -79,6 +79,7 @@ class ApiRepo {
     final Service service = Service();
     dynamic getResult = await service.get(
       'customers?per_page=1000&page=1&search&from_date=$startDate&to_date=$endDate'
+      // 'customers?per_page=1000&page=1&search'
       '',
       true,
     );

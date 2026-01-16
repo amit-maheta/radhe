@@ -137,11 +137,20 @@ class _CustomerListScreenState extends State<CustomerListScreen> {
   @override
   void initState() {
     super.initState();
-    final now = DateTime.now();
-    final formattedDate = DateFormat('yyyy-MM-dd').format(now);
-    startDateGlobal = formattedDate;
-    endDateGlobal = formattedDate;
-    getCustomers(formattedDate, formattedDate);
+    // final now = DateTime.now();
+    // final formattedDate = DateFormat('yyyy-MM-dd').format(now);
+    // startDateGlobal = formattedDate;
+    // endDateGlobal = formattedDate;
+
+    final DateTime endDateTime = DateTime.now();
+    final DateTime startDateTime = endDateTime.subtract(
+      const Duration(days: 60),
+    );
+
+    final String startDate = DateFormat('yyyy-MM-dd').format(startDateTime);
+    final String endDate = DateFormat('yyyy-MM-dd').format(endDateTime);
+
+    getCustomers(startDate, endDate);
   }
 
   List<Customer> get _filteredCustomers {
@@ -187,7 +196,7 @@ class _CustomerListScreenState extends State<CustomerListScreen> {
             onPressed: _showPdfOptions,
             tooltip: 'PDF Generate',
           ),
-          const SizedBox(width: 25,),
+          const SizedBox(width: 25),
           IconButton(
             icon: const Icon(Icons.calendar_today),
             onPressed: () => _selectDate(context),
@@ -648,7 +657,7 @@ class _CustomerListScreenState extends State<CustomerListScreen> {
                       //         CustomerDetailScreen(customer: customer),
                       //   ),
                       // );
-                       final result = await Navigator.push(
+                      final result = await Navigator.push(
                         context,
                         MaterialPageRoute(
                           builder: (context) =>
@@ -742,7 +751,13 @@ class _CustomerListScreenState extends State<CustomerListScreen> {
           return [
             pw.Header(
               level: 0,
-              child: pw.Text('Customer List Report', style: pw.TextStyle(fontSize: 24, fontWeight: pw.FontWeight.bold)),
+              child: pw.Text(
+                'Customer List Report',
+                style: pw.TextStyle(
+                  fontSize: 24,
+                  fontWeight: pw.FontWeight.bold,
+                ),
+              ),
             ),
             pw.SizedBox(height: 20),
             pw.Table(
@@ -750,33 +765,122 @@ class _CustomerListScreenState extends State<CustomerListScreen> {
               children: [
                 pw.TableRow(
                   children: [
-                    pw.Container(padding: const pw.EdgeInsets.all(4), child: pw.Text('S.No.', style: pw.TextStyle(fontWeight: pw.FontWeight.bold))),
-                    pw.Container(padding: const pw.EdgeInsets.all(4), child: pw.Text('Name', style: pw.TextStyle(fontWeight: pw.FontWeight.bold))),
-                    pw.Container(padding: const pw.EdgeInsets.all(4), child: pw.Text('Salesman', style: pw.TextStyle(fontWeight: pw.FontWeight.bold))),
-                    pw.Container(padding: const pw.EdgeInsets.all(4), child: pw.Text('Address', style: pw.TextStyle(fontWeight: pw.FontWeight.bold))),
-                    pw.Container(padding: const pw.EdgeInsets.all(4), child: pw.Text('Source', style: pw.TextStyle(fontWeight: pw.FontWeight.bold))),
-                    pw.Container(padding: const pw.EdgeInsets.all(4), child: pw.Text('Status', style: pw.TextStyle(fontWeight: pw.FontWeight.bold))),
-                    pw.Container(padding: const pw.EdgeInsets.all(4), child: pw.Text('Grade', style: pw.TextStyle(fontWeight: pw.FontWeight.bold))),
-                    pw.Container(padding: const pw.EdgeInsets.all(4), child: pw.Text('Contact', style: pw.TextStyle(fontWeight: pw.FontWeight.bold))),
-                    pw.Container(padding: const pw.EdgeInsets.all(4), child: pw.Text('Visiting Date', style: pw.TextStyle(fontWeight: pw.FontWeight.bold))),
+                    pw.Container(
+                      padding: const pw.EdgeInsets.all(4),
+                      child: pw.Text(
+                        'S.No.',
+                        style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
+                      ),
+                    ),
+                    pw.Container(
+                      padding: const pw.EdgeInsets.all(4),
+                      child: pw.Text(
+                        'Name',
+                        style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
+                      ),
+                    ),
+                    pw.Container(
+                      padding: const pw.EdgeInsets.all(4),
+                      child: pw.Text(
+                        'Salesman',
+                        style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
+                      ),
+                    ),
+                    pw.Container(
+                      padding: const pw.EdgeInsets.all(4),
+                      child: pw.Text(
+                        'Address',
+                        style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
+                      ),
+                    ),
+                    pw.Container(
+                      padding: const pw.EdgeInsets.all(4),
+                      child: pw.Text(
+                        'Source',
+                        style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
+                      ),
+                    ),
+                    pw.Container(
+                      padding: const pw.EdgeInsets.all(4),
+                      child: pw.Text(
+                        'Status',
+                        style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
+                      ),
+                    ),
+                    pw.Container(
+                      padding: const pw.EdgeInsets.all(4),
+                      child: pw.Text(
+                        'Grade',
+                        style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
+                      ),
+                    ),
+                    pw.Container(
+                      padding: const pw.EdgeInsets.all(4),
+                      child: pw.Text(
+                        'Contact',
+                        style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
+                      ),
+                    ),
+                    pw.Container(
+                      padding: const pw.EdgeInsets.all(4),
+                      child: pw.Text(
+                        'Visiting Date',
+                        style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
+                      ),
+                    ),
                   ],
                 ),
-                ...customersList.asMap().entries.map((entry) => pw.TableRow(
-                  children: [
-                    pw.Container(padding: const pw.EdgeInsets.all(4), child: pw.Text((entry.key + 1).toString())),
-                    pw.Container(padding: const pw.EdgeInsets.all(4), child: pw.Text(entry.value.name)),
-                    pw.Container(padding: const pw.EdgeInsets.all(4), child: pw.Text(entry.value.user.name)),
-                    pw.Container(padding: const pw.EdgeInsets.all(4), child: pw.Text(entry.value.address)),
-                    pw.Container(padding: const pw.EdgeInsets.all(4), child: pw.Text(entry.value.source)),
-                    pw.Container(padding: const pw.EdgeInsets.all(4), child: pw.Text(entry.value.status)),
-                    pw.Container(padding: const pw.EdgeInsets.all(4), child: pw.Text(entry.value.grade)),
-                    pw.Container(padding: const pw.EdgeInsets.all(4), child: pw.UrlLink(
-                      destination: 'tel:${entry.value.contactNo}',
-                      child: pw.Text(entry.value.contactNo, style: pw.TextStyle(color: PdfColors.blue, decoration: pw.TextDecoration.underline)),
-                    )),
-                    pw.Container(padding: const pw.EdgeInsets.all(4), child: pw.Text(_formatDate(entry.value.visitingDate))),
-                  ],
-                )),
+                ...customersList.asMap().entries.map(
+                  (entry) => pw.TableRow(
+                    children: [
+                      pw.Container(
+                        padding: const pw.EdgeInsets.all(4),
+                        child: pw.Text((entry.key + 1).toString()),
+                      ),
+                      pw.Container(
+                        padding: const pw.EdgeInsets.all(4),
+                        child: pw.Text(entry.value.name),
+                      ),
+                      pw.Container(
+                        padding: const pw.EdgeInsets.all(4),
+                        child: pw.Text(entry.value.user.name),
+                      ),
+                      pw.Container(
+                        padding: const pw.EdgeInsets.all(4),
+                        child: pw.Text(entry.value.address),
+                      ),
+                      pw.Container(
+                        padding: const pw.EdgeInsets.all(4),
+                        child: pw.Text(entry.value.source),
+                      ),
+                      pw.Container(
+                        padding: const pw.EdgeInsets.all(4),
+                        child: pw.Text(entry.value.status),
+                      ),
+                      pw.Container(
+                        padding: const pw.EdgeInsets.all(4),
+                        child: pw.Text(entry.value.grade),
+                      ),
+                      pw.Container(
+                        padding: const pw.EdgeInsets.all(4),
+                        child: pw.UrlLink(
+                          destination: 'tel:${entry.value.contactNo}',
+                          child: pw.Text(
+                            entry.value.contactNo,
+                            style: pw.TextStyle(
+                              color: PdfColors.blue,
+                              decoration: pw.TextDecoration.underline,
+                            ),
+                          ),
+                        ),
+                      ),
+                      pw.Container(
+                        padding: const pw.EdgeInsets.all(4),
+                        child: pw.Text(_formatDate(entry.value.visitingDate)),
+                      ),
+                    ],
+                  ),
+                ),
               ],
             ),
           ];
@@ -790,7 +894,10 @@ class _CustomerListScreenState extends State<CustomerListScreen> {
       );
     } else {
       // Share the PDF
-      await Printing.sharePdf(bytes: await pdf.save(), filename: 'customer_list.pdf');
+      await Printing.sharePdf(
+        bytes: await pdf.save(),
+        filename: 'customer_list.pdf',
+      );
     }
   }
 
