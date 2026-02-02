@@ -3,6 +3,7 @@ import 'package:radhe/ceramic_splash_screen.dart';
 import 'package:radhe/home_screen.dart';
 import 'package:radhe/login_screen.dart';
 import 'package:radhe/registration_screen.dart';
+import 'package:radhe/screens/all_data_filter.dart';
 import 'package:radhe/screens/customer_list_status_screen.dart';
 
 import 'customer_form_screen.dart';
@@ -10,7 +11,7 @@ import 'forgot_password_screen.dart';
 import 'screens/customer_list_screen.dart';
 
 void main() async {
-  // phone=9876543210&password=12345678
+  // phone=7405161386&password=12345678
   WidgetsFlutterBinding.ensureInitialized();
   // added
 
@@ -84,6 +85,7 @@ class MyApp extends StatelessWidget {
         '/customer-list': (context) => const CustomerListScreen(),
         '/forgot-password': (context) => const ForgotPasswordScreen(),
         '/customer-list-status': (context) => const CustomerListStatusScreen(),
+        '/add-data-filter': (context) => const AllDataFilterScreen(),
       },
     );
   }

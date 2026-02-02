@@ -121,6 +121,15 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                           Navigator.pushNamed(context, '/customer-list-status');
                         },
                       ),
+                       _buildActionCard(
+                        icon: Icons.search,
+                        title: 'My Task',
+                        subtitle: 'All List',
+                        color: Colors.purple,
+                        onTap: () {
+                          Navigator.pushNamed(context, '/add-data-filter');
+                        },
+                      ),
                       // _buildActionCard(
                       //   icon: Icons.settings_outlined,
                       //   title: 'Settings',
