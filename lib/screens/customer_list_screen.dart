@@ -144,7 +144,7 @@ class _CustomerListScreenState extends State<CustomerListScreen> {
 
     final DateTime endDateTime = DateTime.now();
     final DateTime startDateTime = endDateTime.subtract(
-      const Duration(days: 60),
+      const Duration(days: 365),
     );
 
     final String startDate = DateFormat('yyyy-MM-dd').format(startDateTime);

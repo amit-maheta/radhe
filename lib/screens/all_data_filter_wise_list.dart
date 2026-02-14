@@ -509,10 +509,7 @@ class _AllDataFilterWiseListScreenState
 
                       // After coming back, refresh data or text
                       if (result == 'refresh') {
-                        // setState(() {
-                        //   // Update text or reload data here
-                        //   getCustomers(startDateGlobal, endDateGlobal);
-                        // });
+                       Navigator.pop(context, 'refresh');
                       }
                     },
                     style: ElevatedButton.styleFrom(

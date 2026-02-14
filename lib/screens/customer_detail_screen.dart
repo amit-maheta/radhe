@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:intl/intl.dart';
 import 'package:radhe/customer_form_screen.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -59,6 +60,13 @@ class _CustomerDetailScreenState extends State<CustomerDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
+    int daysFromDate(String visitingDate) {
+      final visitDate = DateTime.parse(visitingDate).toLocal();
+      final now = DateTime.now();
+
+      return now.difference(visitDate).inDays;
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Customer Details'),
@@ -122,6 +130,10 @@ class _CustomerDetailScreenState extends State<CustomerDetailScreen> {
                   );
                   return;
                 }
+                final String formattedDateTime = DateFormat(
+                  'dd/MM/yyyy hh:mm a',
+                ).format(DateTime.now());
+
                 final data = {
                   'name': _nameController.text,
                   'address': _addressController.text,
@@ -139,7 +151,7 @@ class _CustomerDetailScreenState extends State<CustomerDetailScreen> {
                   'last_follow_up_date': widget.customer.lastFollowUpDate,
                   'estimate_image': widget.customer.estimateImageUrls,
                   'last_feedback':
-                      "${widget.customer.lastFeedback}[ ${newFeedback} ]",
+                      "${widget.customer.lastFeedback}[ $newFeedback \nDate : $formattedDateTime  \nUpdated By : ${AppConstants.LOGIN_USER_NAME} ]",
                 };
                 print(data);
                 final GlobalKey<State> _dialogKey = GlobalKey<State>();
@@ -307,6 +319,26 @@ class _CustomerDetailScreenState extends State<CustomerDetailScreen> {
               isMultiLine: true,
               isMandatory: true,
             ),
+
+            Row(
+              children: [
+                buildInfoCard(
+                  title: "Last Contact",
+                  days: getLastFollowUpDays(widget.customer.lastFeedback),
+                  icon: Icons.phone_in_talk_rounded,
+                  color: Colors.orange,
+                ),
+                buildInfoCard(
+                  title: "Day Active",
+                  days: daysFromDate(widget.customer.visitingDate),
+                  icon: Icons.calendar_today_rounded,
+                  color: Colors.green,
+                ),
+              ],
+            ),
+
+             const SizedBox(height: 16),
+
             _buildInfoRow(
               context,
               'Next follow up update',
@@ -804,5 +836,98 @@ class _CustomerDetailScreenState extends State<CustomerDetailScreen> {
         widget.customer.lastFollowUpDate = picked.toIso8601String();
       });
     }
+  }
+
+  int? getLastFollowUpDays(String lastFollowUpDate) {
+    final RegExp bracketRegExp = RegExp(r'\[([^\]]+)\]');
+    final List<String> matches = bracketRegExp
+        .allMatches(lastFollowUpDate)
+        .map((match) => match.group(1)!)
+        .toList();
+
+    if (matches.isEmpty) return null;
+
+    // ✅ Get last bracket content
+    final String lastEntry = matches.last;
+
+    // ✅ Regex to extract date (dd/MM/yyyy with optional time)
+    final RegExp dateRegExp = RegExp(
+      r'(\d{2}\/\d{2}\/\d{4}(?: \d{2}:\d{2} [AP]M)?)',
+    );
+
+    final dateMatch = dateRegExp.firstMatch(lastEntry);
+
+    if (dateMatch == null) return null;
+
+    final String dateString = dateMatch.group(0)!;
+
+    // ✅ Parse date
+    DateTime parsedDate;
+    try {
+      if (dateString.contains('AM') || dateString.contains('PM')) {
+        parsedDate = DateFormat('dd/MM/yyyy hh:mm a').parse(dateString);
+      } else {
+        parsedDate = DateFormat('dd/MM/yyyy').parse(dateString);
+      }
+    } catch (e) {
+      return null;
+    }
+
+    // ✅ Compare with today
+    final now = DateTime.now();
+    return now.difference(parsedDate).inDays;
+  }
+
+  Widget buildInfoCard({
+    required String title,
+    required int? days,
+    required IconData icon,
+    required Color color,
+  }) {
+    return Expanded(
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 14),
+        margin: const EdgeInsets.symmetric(horizontal: 6),
+        decoration: BoxDecoration(
+          color: color.withOpacity(0.08),
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(color: color.withOpacity(0.3)),
+        ),
+        child: Row(
+          children: [
+            CircleAvatar(
+              radius: 18,
+              backgroundColor: color.withOpacity(0.2),
+              child: Icon(icon, color: color, size: 18),
+            ),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: const TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.black54,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    days == null ? '--' : '$days Days',
+                    style: TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold,
+                      color: color,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }

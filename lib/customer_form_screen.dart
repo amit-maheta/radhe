@@ -184,7 +184,9 @@ class _CustomerFormScreenState extends State<CustomerFormScreen> {
       'visiting_date': _visitingDate?.toIso8601String(),
       'requirement': _requirementController.text,
       'specific_note': _specificNoteController.text,
-      'mistri_name': _mistriController.text.isNotEmpty ? _mistriController.text : '-',
+      'mistri_name': _mistriController.text.isNotEmpty
+          ? _mistriController.text
+          : '-',
       'last_follow_up_date': _lastFollowUpDate?.toIso8601String(),
       'last_feedback': formattedText,
     };
@@ -243,9 +245,24 @@ class _CustomerFormScreenState extends State<CustomerFormScreen> {
                 controller: _customerNameController,
                 label: 'Customer Name *',
                 icon: Icons.account_circle_outlined,
-                validator: (value) => value == null || value.isEmpty
-                    ? 'Please enter customer name'
-                    : null,
+                // validator: (value) => value == null || value.isEmpty
+                //     ? 'Please enter customer name'
+                //     : null,
+                validator: (value) {
+                  if (value == null || value.trim().isEmpty) {
+                    return 'Please enter customer name';
+                  }
+
+                  final RegExp nameRegex = RegExp(
+                    r'^[A-Za-z]+(?: [A-Za-z]+)*$',
+                  );
+
+                  if (!nameRegex.hasMatch(value.trim())) {
+                    return 'Customer name should contain only letters and spaces';
+                  }
+
+                  return null;
+                },
               ),
               const SizedBox(height: 16),
               _buildTextFormField(
