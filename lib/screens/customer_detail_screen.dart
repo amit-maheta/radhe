@@ -31,7 +31,7 @@ class _CustomerDetailScreenState extends State<CustomerDetailScreen> {
     'In Progress',
   ];
 
-  final List<String> _gradeOptions = ['Normal', 'IMP', 'Most IMP'];
+  final List<String> _gradeOptions = ['Hot', 'Warm', 'Cold'];
   final List<String> _sourceOptions = ['Direct', 'Field'];
 
   final TextEditingController _feedbackController = TextEditingController();

@@ -125,9 +125,18 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                         icon: Icons.search,
                         title: 'My Task',
                         subtitle: 'All List',
-                        color: Colors.purple,
+                        color: Colors.blue,
                         onTap: () {
                           Navigator.pushNamed(context, '/add-data-filter');
+                        },
+                      ),
+                       _buildActionCard(
+                        icon: Icons.search,
+                        title: 'My Hot Task',
+                        subtitle: 'All Hot List',
+                        color: Colors.red,
+                        onTap: () {
+                          Navigator.pushNamed(context, '/add-data-hot-filter');
                         },
                       ),
                       // _buildActionCard(

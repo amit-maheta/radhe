@@ -31,7 +31,7 @@ class _CustomerFormScreenState extends State<CustomerFormScreen> {
 
   String _selectedSource = 'Direct';
   String _selectedStatus = 'Not Done';
-  String _selectedGrade = 'Normal';
+  String _selectedGrade = 'Hot';
   DateTime? _visitingDate = DateTime.now();
   DateTime? _lastFollowUpDate = DateTime.now();
   List<File> _estimateImages = [];
@@ -44,7 +44,7 @@ class _CustomerFormScreenState extends State<CustomerFormScreen> {
     'Cancel',
     'In Progress',
   ];
-  final List<String> _gradeOptions = ['Normal', 'IMP', 'Most IMP'];
+  final List<String> _gradeOptions = ['Hot', 'Warm', 'Cold']; // Hot, Warm, Cold
 
   bool get _isDirectSource => _selectedSource == 'Direct';
 

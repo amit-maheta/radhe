@@ -365,7 +365,6 @@ import 'package:flutter/material.dart';
 import 'package:radhe/network/Repository/ApiProvider.dart';
 import 'package:radhe/screens/all_data_filter_wise_list.dart';
 import '../models/customer.dart';
-import '../widgets/common_app_bar.dart';
 import '../utils/constants.dart';
 
 class AllDataFilterScreen extends StatefulWidget {
@@ -381,6 +380,9 @@ class _AllDataFilterScreenState extends State<AllDataFilterScreen> {
 
   List<Customer> customersList = [];
   List<Customer> filteredCustomers = [];
+
+  String _selectedGrade = 'All';
+  static const List<String> _grades = ['All', 'Hot', 'Warm', 'Cold'];
 
   /// Expand / collapse state
   final Map<String, bool> _expandedUsers = {};
@@ -416,9 +418,9 @@ class _AllDataFilterScreenState extends State<AllDataFilterScreen> {
 
         setState(() {
           customersList = customers;
-          filteredCustomers = customers;
           _expandedUsers.clear();
         });
+        _applyFilters();
       } else {
         showSnakeBar(context, 'Failed to load customers');
       }
@@ -430,28 +432,46 @@ class _AllDataFilterScreenState extends State<AllDataFilterScreen> {
     }
   }
 
-  // ================= SEARCH =================
+  // ================= FILTER + SEARCH =================
 
-  void _onSearchChanged(String value) {
-    final query = value.toLowerCase().trim();
+  void _applyFilters() {
+    final query = _searchController.text.toLowerCase().trim();
 
     setState(() {
-      if (query.isEmpty) {
-        filteredCustomers = customersList;
-      } else {
-        filteredCustomers = customersList.where((customer) {
-          final name = customer.name?.toLowerCase() ?? '';
-          final contact1 = customer.contactNo?.toString() ?? '';
-          final contact2 = customer.contactNo1?.toString() ?? '';
+      filteredCustomers = customersList.where((customer) {
+        // Grade filter
+        final gradeMatch = _selectedGrade == 'All' ||
+            customer.grade.toLowerCase() == _selectedGrade.toLowerCase();
 
-          return name.contains(query) ||
-              contact1.contains(query) ||
-              contact2.contains(query);
-        }).toList();
-      }
+        // Search filter
+        final name = customer.name.toLowerCase();
+        final contact1 = customer.contactNo.toString();
+        final contact2 = customer.contactNo1?.toString() ?? '';
+        final searchMatch = query.isEmpty ||
+            name.contains(query) ||
+            contact1.contains(query) ||
+            contact2.contains(query);
+
+        return gradeMatch && searchMatch;
+      }).toList();
 
       _expandedUsers.clear();
     });
+  }
+
+  void _onSearchChanged(String value) => _applyFilters();
+
+  Color _gradeColor(String grade) {
+    switch (grade) {
+      case 'Hot':
+        return Colors.red;
+      case 'Warm':
+        return Colors.orange;
+      case 'Cold':
+        return Colors.blue;
+      default:
+        return Colors.white;
+    }
   }
 
   // ================= HELPERS =================
@@ -501,13 +521,42 @@ class _AllDataFilterScreenState extends State<AllDataFilterScreen> {
 
   @override
   Widget build(BuildContext context) {
+    const appBarColor = Color(0xFF122B84);
+
     return Scaffold(
-      appBar: CommonAppBar(title: 'All List'),
+      appBar: AppBar(
+        backgroundColor: appBarColor,
+        foregroundColor: Colors.white,
+        centerTitle: true,
+        title: const Text(
+          'All List',
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(52),
+          child: Container(
+            color: appBarColor,
+            padding: const EdgeInsets.fromLTRB(12, 0, 12, 10),
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                children: _grades
+                    .map((grade) => _buildFilterChip(grade))
+                    .toList(),
+              ),
+            ),
+          ),
+        ),
+      ),
       body: customersList.isEmpty
           ? const Center(child: CircularProgressIndicator())
           : Column(
               children: [
-                /// 🔍 SEARCH BAR
+                /// SEARCH BAR
                 Padding(
                   padding: const EdgeInsets.all(12),
                   child: TextField(
@@ -535,15 +584,60 @@ class _AllDataFilterScreenState extends State<AllDataFilterScreen> {
 
                 /// LIST
                 Expanded(
-                  child: ListView(
-                    padding: const EdgeInsets.all(16),
-                    children: getAllUsers()
-                        .map((user) => userSection(user))
-                        .toList(),
-                  ),
+                  child: filteredCustomers.isEmpty
+                      ? const Center(child: Text('No results found'))
+                      : ListView(
+                          padding: const EdgeInsets.all(16),
+                          children: getAllUsers()
+                              .map((user) => userSection(user))
+                              .toList(),
+                        ),
                 ),
               ],
             ),
+    );
+  }
+
+  Widget _buildFilterChip(String grade) {
+    final isSelected = _selectedGrade == grade;
+    final color = _gradeColor(grade);
+    final selectedColor = grade == 'All' ? Colors.white : color;
+
+    return GestureDetector(
+      onTap: () {
+        setState(() => _selectedGrade = grade);
+        _applyFilters();
+      },
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        margin: const EdgeInsets.only(right: 8),
+        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 6),
+        decoration: BoxDecoration(
+          color: isSelected
+              ? selectedColor.withValues(alpha: grade == 'All' ? 1.0 : 0.9)
+              : Colors.white.withValues(alpha: 0.15),
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+            color: isSelected
+                ? selectedColor
+                : Colors.white.withValues(alpha: 0.4),
+            width: 1.5,
+          ),
+        ),
+        child: Text(
+          grade,
+          style: TextStyle(
+            color: isSelected && grade != 'All'
+                ? Colors.white
+                : isSelected
+                    ? const Color(0xFF122B84)
+                    : Colors.white.withValues(alpha: 0.85),
+            fontWeight:
+                isSelected ? FontWeight.bold : FontWeight.normal,
+            fontSize: 13,
+          ),
+        ),
+      ),
     );
   }
 
