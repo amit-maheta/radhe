@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
 import 'package:radhe/customer_form_screen.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -41,6 +40,8 @@ class _CustomerDetailScreenState extends State<CustomerDetailScreen> {
   final TextEditingController _salesmanController = TextEditingController();
   final TextEditingController _requirementController = TextEditingController();
   final TextEditingController _specificNoteController = TextEditingController();
+  final TextEditingController _contactNoController = TextEditingController();
+  final TextEditingController _contactNo1Controller = TextEditingController();
 
   @override
   void initState() {
@@ -56,6 +57,21 @@ class _CustomerDetailScreenState extends State<CustomerDetailScreen> {
     _salesmanController.text = widget.customer.user.name;
     _requirementController.text = widget.customer.requirement;
     _specificNoteController.text = widget.customer.specificNote;
+    _contactNoController.text = widget.customer.contactNo;
+    _contactNo1Controller.text = widget.customer.contactNo1 ?? '';
+  }
+
+  @override
+  void dispose() {
+    _feedbackController.dispose();
+    _nameController.dispose();
+    _addressController.dispose();
+    _salesmanController.dispose();
+    _requirementController.dispose();
+    _specificNoteController.dispose();
+    _contactNoController.dispose();
+    _contactNo1Controller.dispose();
+    super.dispose();
   }
 
   @override
@@ -140,8 +156,8 @@ class _CustomerDetailScreenState extends State<CustomerDetailScreen> {
                   'source': _selectedSource,
                   'latitude': widget.customer.latitude,
                   'longitude': widget.customer.longitude,
-                  'contact_no': widget.customer.contactNo,
-                  'contact_no_1': widget.customer.contactNo1,
+                  'contact_no': _contactNoController.text,
+                  'contact_no_1': _contactNo1Controller.text,
                   'status': _selectedStatus,
                   'grade': _selectedGrade,
                   'visiting_date': widget.customer.visitingDate,
@@ -275,15 +291,10 @@ class _CustomerDetailScreenState extends State<CustomerDetailScreen> {
             _buildInfoRow(
               context,
               'Primary Contact',
-              widget.customer.contactNo1,
+              widget.customer.contactNo,
+              isEditable: true,
+              controller: _contactNoController,
             ),
-            if (widget.customer.contactNo1 != null &&
-                widget.customer.contactNo1!.isNotEmpty)
-              _buildInfoRow(
-                context,
-                'Secondary Contact',
-                widget.customer.contactNo1!,
-              ),
             _buildInfoRow(context, 'Mistri Name', widget.customer.mistriName),
 
             const SizedBox(height: 16),
@@ -390,12 +401,9 @@ class _CustomerDetailScreenState extends State<CustomerDetailScreen> {
     bool isMandatory = false,
     TextEditingController? controller,
   }) {
-    final bool isPhoneNumber =
-        label == 'Primary Contact' || label == 'Secondary Contact';
     final String displayValue = isEditable && controller != null
         ? controller.text
         : (value?.isNotEmpty ?? false ? value! : 'Not specified');
-    final bool isClickable = isPhoneNumber && (value?.isNotEmpty ?? false);
 
     Widget? content, contentEditInput;
 
@@ -509,56 +517,6 @@ class _CustomerDetailScreenState extends State<CustomerDetailScreen> {
       );
     }
 
-    if (isClickable) {
-      final String phoneNumber = value!.replaceAll(
-        RegExp(r'[^0-9]'),
-        '',
-      ); // Remove any non-numeric characters
-      final String formattedNumber = '+91$phoneNumber';
-
-      content = Row(
-        children: [
-          Expanded(
-            child: Text(
-              displayValue,
-              style: const TextStyle(
-                fontSize: 16,
-                color: Colors.black87,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ),
-          const SizedBox(width: 8),
-          Row(
-            children: [
-              // Call Button
-              IconButton(
-                icon: const Icon(Icons.phone, color: Colors.green, size: 24),
-                onPressed: () =>
-                    _makePhoneCall('tel:$formattedNumber', context),
-                padding: EdgeInsets.zero,
-                constraints: const BoxConstraints(),
-                tooltip: 'Call',
-              ),
-              const SizedBox(width: 8),
-              // WhatsApp Button
-              IconButton(
-                icon: SvgPicture.asset(
-                  'assets/svg/whatsapp.svg',
-                  width: 24,
-                  height: 24,
-                  // colorFilter: const ColorFilter.mode(Color(0xFF25D366), BlendMode.srcIn),
-                ),
-                onPressed: () => _openWhatsApp(value, context),
-                padding: EdgeInsets.zero,
-                constraints: const BoxConstraints(),
-                tooltip: 'WhatsApp',
-              ),
-            ],
-          ),
-        ],
-      );
-    }
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4.0),
@@ -576,30 +534,6 @@ class _CustomerDetailScreenState extends State<CustomerDetailScreen> {
     );
   }
 
-  Future<void> _makePhoneCall(String urlString, BuildContext context) async {
-    try {
-      final Uri url = Uri.parse(urlString);
-      if (await canLaunchUrl(url)) {
-        await launchUrl(url);
-      } else {
-        if (!context.mounted) return;
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Could not launch phone app')),
-        );
-      }
-    } catch (e) {
-      if (!context.mounted) return;
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('Error making phone call')));
-    }
-  }
-
-  Future<void> _openWhatsApp(String phoneNumber, BuildContext context) async {
-    // print(phoneNumber);
-    final whatsApp = Uri.parse('https://wa.me/$phoneNumber');
-    await launchUrl(whatsApp);
-  }
 
   Widget _buildImageGrid(List<String> imageUrls) {
     return GridView.builder(
