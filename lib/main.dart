@@ -6,6 +6,8 @@ import 'package:radhe/registration_screen.dart';
 import 'package:radhe/screens/all_data_filter.dart';
 import 'package:radhe/screens/all_data_hot_filter.dart';
 import 'package:radhe/screens/customer_list_status_screen.dart';
+import 'package:radhe/screens/quotation/quotation_form_screen.dart';
+import 'package:radhe/screens/quotation/quotation_preview_screen.dart';
 
 import 'customer_form_screen.dart';
 import 'forgot_password_screen.dart';
@@ -88,6 +90,8 @@ class MyApp extends StatelessWidget {
         '/customer-list-status': (context) => const CustomerListStatusScreen(),
         '/add-data-filter': (context) => const AllDataFilterScreen(),
         '/add-data-hot-filter': (context) => const AllDataHotFilterScreen(),
+        '/quotation-form': (context) => const QuotationFormScreen(),
+        '/quotation-preview': (context) => const QuotationPreviewScreen(),
       },
     );
   }

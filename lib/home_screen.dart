@@ -139,6 +139,15 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                           Navigator.pushNamed(context, '/add-data-hot-filter');
                         },
                       ),
+                      _buildActionCard(
+                        icon: Icons.receipt_long_outlined,
+                        title: 'Quotation',
+                        subtitle: 'Create & Share',
+                        color: Colors.teal,
+                        onTap: () {
+                          Navigator.pushNamed(context, '/quotation-form');
+                        },
+                      ),
                       // _buildActionCard(
                       //   icon: Icons.settings_outlined,
                       //   title: 'Settings',
